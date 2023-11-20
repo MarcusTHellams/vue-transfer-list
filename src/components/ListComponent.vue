@@ -12,7 +12,7 @@ const isLeft = computed(() => props.whichSide === 'left');
 
 const store = useItemsStore();
 
-const changeHandler = ({ value, isChecked }: any) => {
+const changeHandler = (value: string, isChecked: boolean) => {
   if (isChecked) {
     isLeft.value
       ? (store.leftSideItemsToMoveRight = [...store.leftSideItemsToMoveRight, value])
@@ -34,7 +34,14 @@ const changeHandler = ({ value, isChecked }: any) => {
     <div class="flex flex-col gap-1">
       <template v-for="number in isLeft ? store.leftSideItems : store.rightSideItems" :key="number">
         <Label class="flex gap-1 items-center">
-          <Checkbox @change="changeHandler" :value="number" />
+          <Checkbox
+            @update:checked="
+              (isChecked) => {
+                changeHandler(number, isChecked);
+              }
+            "
+            :value="number"
+          />
           {{ number }}
         </Label>
       </template>
