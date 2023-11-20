@@ -1,45 +1,18 @@
 <script setup lang="ts">
+import { cn } from '@/lib/utils';
+import { Check } from 'lucide-vue-next';
 import type { CheckboxRootEmits, CheckboxRootProps } from 'radix-vue';
 import { CheckboxIndicator, CheckboxRoot, useForwardPropsEmits } from 'radix-vue';
-import { Check } from 'lucide-vue-next';
-import { cn } from '@/lib/utils';
-import { toRaw } from 'vue';
 
-const props = defineProps<
-  CheckboxRootProps & {
-    modelValue?: string | string[];
-  }
->();
+const props = defineProps<CheckboxRootProps>();
 const emits = defineEmits<
   CheckboxRootEmits & {
-    'update:modelValue': any;
     change: [{ value: typeof props.value; isChecked: boolean }];
   }
 >();
 
 const updateCheckedHandler = (bool: boolean) => {
   emits('change', { value: props.value, isChecked: bool });
-  if (props.modelValue) {
-    const rawModelValue = toRaw(props.modelValue);
-    if (rawModelValue instanceof Array) {
-      if (bool) {
-        emits('update:modelValue', [...rawModelValue, props.value]);
-        return;
-      }
-      emits(
-        'update:modelValue',
-        rawModelValue.filter((value) => value !== props.value),
-      );
-      return;
-    }
-    if (bool) {
-      emits('update:modelValue', props.value);
-      return;
-    }
-    emits('update:modelValue', '');
-    return;
-  }
-  return;
 };
 
 const forwarded = useForwardPropsEmits(props, emits);
